@@ -86,22 +86,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const urls = locations.map((location) => {
         return `https://api.openweathermap.org/data/2.5/weather?q=${location}&APPID=${apiKey}`;
     });
-  
-    // Return All Promise
-    Promise.all([get(urls[0]), get(urls[1]), get(urls[2]), get(urls[3])])
-        .then((responses) => {
-            return responses.map((response) => {
+
+    /**
+     * Using First Bracket to Invoke The Method after It Declare
+     */
+    (async() => {
+        try {
+            let responses = [];
+
+            responses.push(await get(urls[0]));
+            responses.push(await get(urls[1]));
+            responses.push(await get(urls[2]));
+            responses.push(await get(urls[3]));
+
+            let literals = responses.map((response) => {
                 return successHandler(response);
             });
-        })
-        .then((literals) => {
+
             weatherDiv.innerHTML = `<h1>Weather</h1>${literals.join('')}`;
-        })
-        .catch((status) => {
+        } catch (status) {
             failHandler(status);
-        })
-        .finally(() => {
+        } finally {
             weatherDiv.classList.remove('hidden');
-        });
+        }
+    })();
 });
   
